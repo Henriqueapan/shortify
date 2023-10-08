@@ -1,0 +1,1 @@
+docker build -t shortify-api-prd -f ./src/main/docker/Dockerfile.graalvm --build-arg="DATABASE_KIND=postgresql" --build-arg="DATABASE_USER=shortify" --build-arg="DATABASE_PASS=shortify" --build-arg="DATABASE_URL=jdbc:postgresql://host.docker.internal:5432/"  .

@@ -1,0 +1,42 @@
+FROM ghcr.io/graalvm/graalvm-ce:ol8-java17 as BUILD
+RUN mkdir /code/
+COPY src /code/src
+COPY mvnw /code/mvnw
+COPY .mvn /code/.mvn
+COPY pom.xml /code/
+WORKDIR /code
+
+RUN bash && \
+    gu install native-image
+
+#In order to run tests at build time, a test database needs to exist.
+#This database's credentials can be set here, if need be
+
+#ENV DATABASE_KIND=${DATABASE_KIND}
+#ENV DATABASE_USER=${DATABASE_USER}
+#ENV DATABASE_PASS=${DATABASE_PASS}
+#ENV DATABASE_URL=${DATABASE_URL}
+
+#RUN echo ${DATABASE_KIND}
+
+RUN ./mvnw clean install -Dnative
+
+FROM quay.io/quarkus/quarkus-micro-image:2.0
+ARG DATABASE_KIND=postgresql
+ARG DATABASE_USER=shortify
+ARG DATABASE_PASS=shortify
+ARG DATABASE_URL=jdbc:postgresql://host.docker.internal:5432/
+WORKDIR /work/
+COPY --from=BUILD /code/target/*-runner /work/application
+
+ENV DATABASE_KIND=${DATABASE_KIND}
+ENV DATABASE_USER=${DATABASE_USER}
+ENV DATABASE_PASS=${DATABASE_PASS}
+ENV DATABASE_URL=${DATABASE_URL}
+
+RUN chmod 775 /work
+
+EXPOSE 8088
+USER 1001
+
+CMD ["./application", "-Dquarkus.http.host=0.0.0.0"]

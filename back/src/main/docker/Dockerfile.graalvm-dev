@@ -1,0 +1,33 @@
+FROM ghcr.io/graalvm/graalvm-ce:ol8-java17 as BUILD
+RUN mkdir /code/
+COPY src /code/src
+COPY mvnw /code/mvnw
+COPY .mvn /code/.mvn
+COPY pom.xml /code/
+WORKDIR /code
+
+RUN bash && \
+    gu install native-image
+
+ENV DATABASE_KIND=postgresql
+ENV DATABASE_USER=shortify
+ENV DATABASE_PASS=shortify
+ENV DATABASE_URL=jdbc:postgresql://host.docker.internal:5432/
+
+RUN ./mvnw clean install -Dnative
+
+FROM quay.io/quarkus/quarkus-micro-image:2.0
+WORKDIR /work/
+COPY --from=BUILD /code/target/*-runner /work/application
+
+ENV DATABASE_KIND=postgresql
+ENV DATABASE_USER=shortify
+ENV DATABASE_PASS=shortify
+ENV DATABASE_URL=jdbc:postgresql://host.docker.internal:5432/
+
+RUN chmod 775 /work
+
+EXPOSE 8088
+USER 1001
+
+CMD ["./application", "-Dquarkus.http.host=0.0.0.0"]
