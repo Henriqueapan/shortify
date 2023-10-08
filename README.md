@@ -18,4 +18,6 @@ The project has now been fully built and served in a docker compose environment.
 
 ## Accessing the local application
 
-In a web browser, go to ```http://localhost:8080``` and feel free to use it as normal
+In a web browser, go to ```http://localhost:8080``` and feel free to use it as normal.
+
+You can access the shortified version of the requested URI by copying it (clicking on the red box that contains the short URI) and pasting it on your browser.
