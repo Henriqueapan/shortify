@@ -14,7 +14,7 @@ This mono repo was created in order to allow the execution of a simple docker co
   1. Clone the repository: ```git clone https://github.com/Henriqueapan/shortify.git```
   2. In the repo`s root directory run: ```docker compose -f docker-compose-dev.yml up --build -d```
 
-The project has now been fully built and server in a docker compose containers.
+The project has now been fully built and served in a docker compose environment.
 
 ## Accessing the local application
 
