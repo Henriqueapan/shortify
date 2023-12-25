@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 
 public class URIRecordService {
     public String createUriResource(String longUri) {
+        // TODO: Fix bug in which an URI without the protocol gets the current host appended to it`s start
         // Checking if longUri already exists in the database
         URIRecordEntity existantUriRecord = URIRecordEntity.findByLongUri(longUri);
 

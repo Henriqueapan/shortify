@@ -1,0 +1,31 @@
+# This Docker Compose file is useful for building the shortify-api image and running a test instance along with a
+# test Postgres database
+
+version: '3.3'
+
+services:
+  postgres-tests:
+    image: postgres
+    environment:
+      POSTGRES_DB: shortify
+      POSTGRES_USER: shortify
+      POSTGRES_PASSWORD: shortify
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready", "-d", "db_prod"]
+      interval: 5s
+      timeout: 60s
+      retries: 5
+
+  shortify-api:
+    build:
+      context: .
+      dockerfile: ./src/main/docker/Dockerfile.graalvm
+      args:
+        DATABASE_KIND: postgresql
+        DATABASE_USER: shortify
+        DATABASE_PASS: shortify
+        DATABASE_URL: jdbc:postgresql://postgres-tests:5432/
+    image: henriqueapan/shortify-api:latest
+    depends_on:
+      postgres-tests:
+        condition: service_healthy
