@@ -17,7 +17,7 @@ Shortify is an URI Shortening full stack application written in Vue and Quarkus.
 
 ## Short URI hostname
 
-Shortify will use the hostname of the server it is beign served on to create the shortened version of URIs.
+Shortify will use the hostname of the server it is being served on to create the shortened version of URIs.
 
 If the application is served in local mode, the hostname will be `localhost`.
 
